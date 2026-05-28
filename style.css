@@ -1,0 +1,262 @@
+body {
+    margin: 0;
+    background-color: #000;
+    color: #fff;
+    font-family: 'Arial', sans-serif;
+    overflow: hidden;
+}
+
+#menuOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(0,0,0,0.9), rgba(10,10,30,0.95));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+    z-index: 100;
+}
+
+/* Header */
+.menuHeader {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.mainLogo {
+    width: 120px;
+    margin-bottom: 10px;
+}
+
+h1 {
+    font-family: 'Arial', sans-serif;
+    font-weight: bold;
+    font-size: 28px;
+    color: #ffd700; /* Dorado para resaltar */
+    margin: 0;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+/* Contenido Principal */
+.mainMenuContent {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    max-width: 1200px;
+    flex-grow: 1;
+}
+
+/* Selección */
+.selectionSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.selectorContainer {
+    display: flex;
+    gap: 30px;
+}
+
+.fighterCard h3 {
+    font-size: 14px;
+    color: #aaa;
+    text-align: center;
+}
+
+.viewer {
+    width: 220px;
+    height: 280px;
+    background: #111;
+    border: 2px solid #333;
+    border-radius: 8px;
+}
+
+/* Botones */
+button {
+    background: #ffd700;
+    border: none;
+    padding: 10px 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+    border-radius: 4px;
+}
+
+button:hover {
+    background: #fff;
+    transform: scale(1.05);
+}
+
+#fightBtn {
+    margin-top: 30px;
+    width: 100%;
+    padding: 20px;
+    font-size: 20px;
+    background: #ad0202; /* Rojo pelea */
+    color: white;
+}
+
+#fightBtn:disabled {
+    background: #444;
+    cursor: not-allowed;
+}
+
+/* Instrucciones (Actualizado a 2 columnas) */
+.instructionsBoard {
+    background: rgba(255,255,255,0.05);
+    padding: 20px 30px;
+    border-radius: 12px;
+    width: 600px; /* Lo hicimos más ancho para acomodar todo */
+}
+
+.instructionsBoard h2 {
+    font-size: 18px;
+    border-bottom: 1px solid #ffd700;
+    padding-bottom: 10px;
+    text-align: center;
+    margin-top: 0;
+}
+
+.instructionGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Divide el contenedor en dos columnas iguales */
+    gap: 30px; /* Espacio entre columnas */
+    margin-top: 20px;
+}
+
+.instGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Espaciado vertical entre cada tecla */
+}
+
+.instItem {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.instItem img {
+    width: 32px; 
+    height: 32px;
+    object-fit: contain; /* Evita que las imágenes se deformen */
+}
+
+.comboKeys {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: bold;
+    color: #ffd700;
+}
+
+/* Footer integrantes */
+.menuFooter {
+    width: 100%;
+    margin-top: 30px;
+    border-top: 1px solid #333;
+    padding-top: 20px;
+}
+
+.teamGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    text-align: center;
+    gap: 10px;
+}
+
+.student {
+    font-size: 12px;
+    color: #888;
+}
+
+.student span {
+    font-weight: bold;
+    color: #eee;
+    font-size: 13px;
+}
+
+/* Botón VR */
+/* Botón VR */
+.vr-button {
+  position: fixed !important;
+
+  left: 50%;
+  bottom: 90px !important;
+
+  transform: translateX(-50%) scale(1);
+
+  z-index: 9999;
+
+  transition:
+    transform 0.2s,
+    background 0.2s,
+    opacity 0.2s;
+}
+
+.vr-button:hover {
+  background: #fff;
+  transform: translateX(-50%) scale(1.05);
+}
+
+/* =================================================
+   SISTEMA DE VIDA Y ROUNDS (HUD)
+================================================= */
+#gameHUD {
+    position: absolute;
+    top: 0; left: 0; width: 100%;
+    display: flex; justify-content: space-between;
+    padding: 20px 40px; box-sizing: border-box;
+    z-index: 50; pointer-events: none;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+}
+
+.hud-player, .hud-enemy { width: 35%; }
+.hud-enemy { text-align: right; }
+
+.hud-name { font-weight: bold; font-size: 20px; text-shadow: 2px 2px 2px #000; margin-bottom: 5px; }
+
+.health-bar-bg {
+    width: 100%; height: 25px;
+    background: #333; border: 2px solid #fff; border-radius: 4px;
+    overflow: hidden;
+}
+
+.health-bar-fill {
+    height: 100%; width: 100%;
+    background: #00ff00; /* Verde inicial */
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+/* El jugador es azul, el enemigo es rojo (opcional, pero ayuda) */
+#hp-player { transform-origin: left; }
+#hp-enemy { float: right; }
+
+.hud-center { text-align: center; width: 20%; }
+#hud-round { font-size: 22px; font-weight: bold; color: #ffd700; text-shadow: 2px 2px 4px #000; }
+#hud-timer { font-size: 32px; font-weight: bold; text-shadow: 2px 2px 4px #000; font-family: monospace; }
+
+/* =================================================
+   ANUNCIADOR CENTRAL (K.O, ROUNDS)
+================================================= */
+#announcer {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 80px; font-weight: bold;
+    color: #fff; text-shadow: 0px 0px 20px #ff0000, 4px 4px 0px #000;
+    z-index: 60; pointer-events: none;
+    text-align: center;
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes popIn {
+    0% { transform: translate(-50%, -50%) scale(0.1); opacity: 0; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
