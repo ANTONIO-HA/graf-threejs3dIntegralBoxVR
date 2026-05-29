@@ -93,13 +93,31 @@ button:hover {
     transform: scale(1.05);
 }
 
-#fightBtn {
-    margin-top: 30px;
+/* Contenedor de botones 50/50 */
+.actionButtons {
+    display: flex;
     width: 100%;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+#fightBtn {
+    flex: 1; /* Ocupa el 50% */
     padding: 20px;
     font-size: 20px;
     background: #ad0202; /* Rojo pelea */
     color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+}
+
+#fightBtn:hover:not(:disabled) {
+    background: #fff;
+    color: #ad0202;
+    transform: scale(1.05);
 }
 
 #fightBtn:disabled {
@@ -121,6 +139,33 @@ button:hover {
     padding-bottom: 10px;
     text-align: center;
     margin-top: 0;
+}
+
+.tabsContainer {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ffd700;
+    padding-bottom: 15px;
+}
+
+.tabBtn {
+    background: #333;
+    color: #aaa;
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 6px;
+}
+
+.tabBtn.active {
+    background: #ffd700;
+    color: #000;
+}
+
+.tabBtn:hover:not(.active) {
+    background: #555;
+    color: #fff;
 }
 
 .instructionGrid {
@@ -183,80 +228,469 @@ button:hover {
 }
 
 /* Botón VR */
-/* Botón VR */
 .vr-button {
-  position: fixed !important;
-
-  left: 50%;
-  bottom: 90px !important;
-
-  transform: translateX(-50%) scale(1);
-
-  z-index: 9999;
-
-  transition:
-    transform 0.2s,
-    background 0.2s,
-    opacity 0.2s;
+    position: relative !important;
+    left: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    flex: 1 !important; /* Ocupa el otro 50% */
+    margin: 0 !important;
+    padding: 20px !important;
+    font-size: 20px !important;
+    font-family: 'Arial', sans-serif !important;
+    font-weight: bold !important;
+    background: #004bc8 !important; /* Azul VR */
+    color: white !important;
+    border: none !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    opacity: 1 !important;
+    transition: transform 0.2s, background 0.2s !important;
 }
 
 .vr-button:hover {
-  background: #fff;
-  transform: translateX(-50%) scale(1.05);
+    background: #fff !important;
+    color: #004bc8 !important;
+    transform: scale(1.05) !important;
 }
 
 /* =================================================
-   SISTEMA DE VIDA Y ROUNDS (HUD)
+   HUD DE COMBATE
 ================================================= */
 #gameHUD {
-    position: absolute;
-    top: 0; left: 0; width: 100%;
-    display: flex; justify-content: space-between;
-    padding: 20px 40px; box-sizing: border-box;
-    z-index: 50; pointer-events: none;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+  position: absolute;
+  top: 0; left: 0; width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 16px 28px 0;
+  box-sizing: border-box;
+  z-index: 50;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.82) 0%,
+    rgba(0,0,0,0.30) 55%,
+    transparent 100%
+  );
 }
 
-.hud-player, .hud-enemy { width: 35%; }
-.hud-enemy { text-align: right; }
+/* ── Paneles laterales ── */
+.hud-player,
+.hud-enemy {
+  width: 38%;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.hud-enemy { align-items: flex-end; }
 
-.hud-name { font-weight: bold; font-size: 20px; text-shadow: 2px 2px 2px #000; margin-bottom: 5px; }
+/* ── Nombre del luchador ── */
+.hud-name {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 3.5px;
+  color: rgba(255,255,255,0.50);
+  text-transform: uppercase;
+  text-shadow: 0 1px 6px rgba(0,0,0,1);
+}
 
+/* ── Barra de vida — fondo ── */
 .health-bar-bg {
-    width: 100%; height: 25px;
-    background: #333; border: 2px solid #fff; border-radius: 4px;
-    overflow: hidden;
+  width: 100%;
+  height: 20px;
+  background: rgba(0,0,0,0.55);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 3px;
+  overflow: visible;
+  position: relative;
+  box-shadow:
+    inset 0 2px 5px rgba(0,0,0,0.6),
+    0 0 0 1px rgba(0,0,0,0.4);
 }
 
+/* ── Barra de vida — relleno ── */
 .health-bar-fill {
-    height: 100%; width: 100%;
-    background: #00ff00; /* Verde inicial */
-    transition: width 0.3s ease, background-color 0.3s ease;
+  height: 100%;
+  width: 100%;
+  border-radius: 2px;
+  background-color: #00cc55;            /* sobreescrito por JS */
+  position: relative;
+  transition:
+    width      0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.4s ease,
+    box-shadow 0.4s ease;
 }
 
-/* El jugador es azul, el enemigo es rojo (opcional, pero ayuda) */
-#hp-player { transform-origin: left; }
-#hp-enemy { float: right; }
+/* Shine superior de la barra */
+.health-bar-fill::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 45%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.22), transparent);
+  border-radius: 2px 2px 0 0;
+  pointer-events: none;
+}
 
-.hud-center { text-align: center; width: 20%; }
-#hud-round { font-size: 22px; font-weight: bold; color: #ffd700; text-shadow: 2px 2px 4px #000; }
-#hud-timer { font-size: 32px; font-weight: bold; text-shadow: 2px 2px 4px #000; font-family: monospace; }
+#hp-player { transform-origin: left; }
+#hp-enemy  { transform-origin: right; float: right; }
+
+/* Pulso de vida baja */
+@keyframes healthPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.45; }
+}
+.health-bar-fill.low-health      { animation: healthPulse 1.1s ease-in-out infinite; }
+.health-bar-fill.critical-health { animation: healthPulse 0.42s ease-in-out infinite; }
+
+/* ── Centro del HUD ── */
+.hud-center {
+  text-align: center;
+  width: 22%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding-top: 2px;
+}
+
+/* ── Etiqueta de round ── */
+#hud-round {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  color: #ffd700;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 14px rgba(255,215,0,0.55),
+    0 1px 4px rgba(0,0,0,0.9);
+}
+
+/* ── Cronómetro ── */
+#hud-timer {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 42px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 2px;
+  color: #ffffff;
+  text-shadow:
+    0 0 22px rgba(255,255,255,0.28),
+    0 2px 8px rgba(0,0,0,0.95);
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+/* Advertencia de tiempo bajo */
+@keyframes timerPulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.05); }
+}
+
+#hud-timer.warning {
+  color: #ffc400;
+  text-shadow:
+    0 0 20px rgba(255,196,0,0.65),
+    0 2px 8px rgba(0,0,0,0.95);
+  animation: timerPulse 1s ease-in-out infinite;
+}
+#hud-timer.critical {
+  color: #ff3c3c;
+  text-shadow:
+    0 0 22px rgba(255,60,60,0.75),
+    0 2px 8px rgba(0,0,0,0.95);
+  animation: timerPulse 0.38s ease-in-out infinite;
+}
 
 /* =================================================
-   ANUNCIADOR CENTRAL (K.O, ROUNDS)
+   ANUNCIADOR CENTRAL
 ================================================= */
 #announcer {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 80px; font-weight: bold;
-    color: #fff; text-shadow: 0px 0px 20px #ff0000, 4px 4px 0px #000;
-    z-index: 60; pointer-events: none;
-    text-align: center;
-    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 60;
+  pointer-events: none;
+  text-align: center;
+  white-space: nowrap;
+
+  font-size: 100px;
+  font-weight: 900;
+  letter-spacing: 10px;
+  text-transform: uppercase;
+  color: #fff;
+
+  text-shadow:
+    0 0  30px rgba(255,215,0,0.95),
+    0 0  70px rgba(255,140,0,0.55),
+    0 0 120px rgba(255,60,0,0.25),
+    4px 4px 0 rgba(0,0,0,0.55);
+
+  animation: announcerIn 0.42s cubic-bezier(0.22, 1.2, 0.36, 1) forwards;
 }
 
-@keyframes popIn {
-    0% { transform: translate(-50%, -50%) scale(0.1); opacity: 0; }
-    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+/* Capa de resplandor duplicado detrás del texto */
+#announcer::before {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  color: transparent;
+  -webkit-text-stroke: 14px rgba(255,215,0,0.12);
+  filter: blur(10px);
+  z-index: -1;
+  pointer-events: none;
+}
+
+@keyframes announcerIn {
+  0% {
+    transform: translate(-50%, -50%) scale(0.35) skewX(-8deg);
+    opacity: 0;
+    filter: blur(10px);
+  }
+  65% {
+    transform: translate(-50%, -50%) scale(1.07) skewX(1.5deg);
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1) skewX(0deg);
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   SISTEMA DE PAUSA
+═══════════════════════════════════════════════════════════════════ */
+
+#pauseOverlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.70);
+  backdrop-filter: blur(8px) brightness(0.55);
+  -webkit-backdrop-filter: blur(8px) brightness(0.55);
+  z-index: 200;
+}
+
+/* Panel central */
+.pause-panel {
+  position: relative;
+  background: linear-gradient(160deg, #0d0d20 0%, #060612 100%);
+  border: 1.5px solid #ffd700;
+  border-radius: 20px;
+  padding: 44px 56px 36px;
+  min-width: 340px;
+  text-align: center;
+  box-shadow:
+    0 0 0 1px rgba(255,215,0,0.07),
+    0 0 55px rgba(255,215,0,0.18),
+    0 22px 80px rgba(0,0,0,0.92);
+  animation: pausePanelIn 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  overflow: hidden;
+}
+
+/* Línea dorada superior del panel */
+.pause-panel::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 18%; right: 18%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #ffd700 45%, #ffd700 55%, transparent);
+  border-radius: 2px;
+}
+
+/* Destello radial interior */
+.pause-panel-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(255,215,0,0.05) 0%, transparent 68%);
+  pointer-events: none;
+}
+
+@keyframes pausePanelIn {
+  from { transform: scale(0.80) translateY(18px); opacity: 0; }
+  to   { transform: scale(1)    translateY(0);    opacity: 1; }
+}
+
+/* Ícono ▮▮ */
+.pause-badge {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 7px;
+  color: rgba(255, 215, 0, 0.45);
+}
+
+/* Título PAUSA */
+.pause-title {
+  margin: 0 0 4px;
+  font-size: 44px;
+  font-weight: 900;
+  letter-spacing: 10px;
+  color: #ffd700;
+  text-shadow: 0 0 38px rgba(255,215,0,0.45), 0 2px 0 rgba(0,0,0,0.55);
+}
+
+/* Subtítulo */
+.pause-subtitle {
+  margin: 0 0 20px;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: rgba(255,255,255,0.28);
+  text-transform: uppercase;
+}
+
+/* Línea separadora */
+.pause-divider {
+  height: 1px;
+  margin: 0 0 22px;
+  background: linear-gradient(90deg, transparent, rgba(255,215,0,0.28), transparent);
+}
+
+/* Contenedor de botones */
+.pause-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Botón base */
+.pause-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 13px 22px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 800;
+  font-family: 'Arial', sans-serif;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform     0.13s ease,
+    box-shadow    0.13s ease,
+    background    0.13s ease,
+    border-color  0.13s ease,
+    filter        0.13s ease;
+}
+
+/* Reflejo superior del botón */
+.pause-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.07), transparent 55%);
+  pointer-events: none;
+}
+
+.pause-btn:hover  { transform: translateY(-2px) scale(1.025); }
+.pause-btn:active { transform: scale(0.96); filter: brightness(0.85); }
+
+.pause-btn-icon  { font-size: 15px; opacity: 0.88; min-width: 18px; }
+
+/* Pequeño hint de tecla (sólo Continuar) */
+.pause-btn-hint {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  opacity: 0.4;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-family: monospace;
+}
+
+/* Badge BETA (botón VR) */
+.pause-btn-badge-vr {
+  margin-left: auto;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  background: rgba(0,100,255,0.3);
+  border: 1px solid rgba(0,130,255,0.5);
+  border-radius: 4px;
+  padding: 1px 6px;
+  color: #7ab8ff;
+}
+
+/* ── Continuar (dorado primario) ── */
+.pause-btn--primary {
+  background: linear-gradient(135deg, #dba800, #ffd700 52%, #c09000);
+  color: #000;
+  border-color: rgba(255,215,0,0.35);
+  box-shadow: 0 4px 20px rgba(255,215,0,0.28), inset 0 1px 0 rgba(255,255,255,0.14);
+}
+.pause-btn--primary:hover {
+  box-shadow: 0 8px 30px rgba(255,215,0,0.48), inset 0 1px 0 rgba(255,255,255,0.18);
+}
+
+/* ── Reiniciar (neutro blanco) ── */
+.pause-btn--secondary {
+  background: rgba(255,255,255,0.05);
+  color: #ddd;
+  border-color: rgba(255,255,255,0.13);
+}
+.pause-btn--secondary:hover {
+  background: rgba(255,255,255,0.11);
+  border-color: rgba(255,255,255,0.3);
+  color: #fff;
+}
+
+/* ── Entrar a VR (azul) ── */
+.pause-btn--vr {
+  background: rgba(0, 75, 200, 0.18);
+  color: #7ab8ff;
+  border-color: rgba(0, 100, 220, 0.35);
+}
+.pause-btn--vr:hover {
+  background: rgba(0, 75, 200, 0.32);
+  border-color: #7ab8ff;
+  color: #fff;
+  box-shadow: 0 4px 18px rgba(0,100,255,0.22);
+}
+
+/* ── Salir (rojo peligro) ── */
+.pause-btn--danger {
+  background: rgba(173, 2, 2, 0.15);
+  color: #ff7070;
+  border-color: rgba(173, 2, 2, 0.32);
+}
+.pause-btn--danger:hover {
+  background: rgba(173, 2, 2, 0.30);
+  border-color: #ff7070;
+  color: #fff;
+  box-shadow: 0 4px 18px rgba(200,0,0,0.2);
+}
+
+/* Hint de tecla al pie del panel */
+.pause-hint {
+  margin: 22px 0 0;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: rgba(255,255,255,0.18);
+}
+.pause-hint kbd {
+  font-family: monospace;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 10px;
+  color: rgba(255,255,255,0.35);
+}
+
+/* Bloqueo absoluto para que Three.js no muestre el botón antes de tiempo */
+.vr-oculto {
+    display: none !important;
 }
